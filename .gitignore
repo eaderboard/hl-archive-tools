@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+
+# never commit data or secrets
+/data/
+*.parquet
+*.jsonl.gz
+*.lz4
+.env
+*.key
+.DS_Store
