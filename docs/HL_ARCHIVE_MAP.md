@@ -5,8 +5,11 @@ warn that "there is no guarantee of timely updates and data may be missing", and
 turns out to be load-bearing: one prefix is abandoned mid-2025, another changed line
 schema partway through, and the L2 books have real gaps while the fills do not.
 
-Access: **requester-pays**, region `ap-northeast-1`. Verify bounds yourself before
-relying on any range — these were true on 2026-07-22.
+Access: **requester-pays**, region `ap-northeast-1`. **Every size and day-count below
+is a measurement taken 2026-07-22, not a fixed property of the archive — it grows daily
+and this file does not.** The fills archive alone adds ~0.5 GB/day (500 MB/day observed
+over 422 days). Re-run `list_keys()` from `stream_extract.py` against a prefix to get a
+current count before relying on any number here; do not extrapolate silently.
 
 ## Bucket `hyperliquid-archive` — market data
 
@@ -38,7 +41,8 @@ before assuming a contiguous range.
 | `explorer_blocks/<blocknum-bucket>/` | raw blocks | full chain | very raw; expensive to mine |
 | `replica_cmds/<restart-ts>/` | node replica command logs | 2025-01 → | infra artifact, not research data |
 
-Combined fills across both schemas: **10,131 objects / ~211 GB / 422 days**, and — unlike
+Combined fills across both schemas, **as measured 2026-07-22**: 10,131 objects / ~211 GB
+/ 422 days (grows ~24 objects/day, ~0.5 GB/day). Unlike
 the L2 books — **zero missing days** when measured (360/360 for the by-block prefix).
 
 ## Gotchas that will bite you

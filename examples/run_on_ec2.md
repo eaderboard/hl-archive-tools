@@ -4,7 +4,7 @@ Everything below is read-only against Hyperliquid's buckets. The only resources 
 create are your own output bucket, an IAM role, and one instance — all removed at the
 end.
 
-Total cost for the full ~211 GB fills extract: **under $1**.
+Total cost for the full fills extract (~211 GB as measured 2026-07-22 — check `docs/HL_ARCHIVE_MAP.md` for a current figure before running): **under $1**. Cost scales with archive size, which grows ~0.5 GB/day; this stays cheap for a long time.
 
 ## 0. Prerequisites
 

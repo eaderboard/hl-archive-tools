@@ -12,22 +12,32 @@ from a wide archive cheaply.
 
 ## The core idea: stream, don't download
 
-The naive approach — `aws s3 cp` the archive to your machine — fails twice: the fills
-archive alone is ~211 GB (egress ≈ $19), and most laptops don't have room for it.
+**Every size below is a snapshot, not a constant — this archive grows ~0.5 GB/day
+(measured 2026-07-22: 211 GB over 422 days). Recompute before trusting a number here;
+see `docs/HL_ARCHIVE_MAP.md` for how.**
 
-The fix is to put the compute next to the data:
+The naive approach — `aws s3 cp` the archive to your machine — fails twice: the fills
+archive alone was ~211 GB as of 2026-07-22 (egress ≈ $19 at that size, and rising ~$0.09
+worth per day), and most laptops don't have room for an archive that only grows.
+
+The fix is to put the compute next to the data — this scales with the archive, not
+against it:
 
 ```
         S3 (ap-northeast-1)  ──free, same-region──▶  small EC2  ──▶  filtered result
-             211 GB                                  30 GB disk        ~500 MB
+          any size, growing                          30 GB disk     ~0.1% of source*
 ```
+*\* observed on the liquidation extract (2026-07-22): 211 GB in → 561 MB out. Your
+predicate's selectivity will differ; this is the shape, not a promise.*
 
 Each object is fetched, decompressed **in memory**, filtered, and discarded. Peak disk
-stays at O(one file), so archive size stops being a constraint — only time and bandwidth
-matter. The instance self-terminates when done.
+stays at O(one file) **regardless of how large the archive becomes** — only time and
+bandwidth scale with source size. The instance self-terminates when done.
 
-Measured on a `m7i-flex.large` (2 vCPU, free-tier eligible): **~4.2 GB/min**, 211 GB in
-~50 minutes, **total cost under $1** including EBS.
+Measured on a `m7i-flex.large` (2 vCPU, free-tier eligible) against the 2026-07-22
+211 GB snapshot: **~4.2 GB/min**, ~50 minutes, **total cost under $1** including EBS.
+At ~0.5 GB/day growth, expect run time to grow by roughly 15 seconds per month you
+wait — reflow the archive periodically rather than assuming last quarter's numbers.
 
 ## What's here
 
